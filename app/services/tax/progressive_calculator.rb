@@ -6,14 +6,24 @@ module Tax
     end
 
     def call(income)
-      income = BigDecimal(income.to_s)
-      raise ArgumentError, "income must be >= 0" if income.negative?
+      income = parse(income)
 
       breakdown = @bands.map do |band|
         taxable = band.taxable(income)
         BandTax.new(band:, taxable:, tax: taxable * band.rate)
       end
       Result.new(income:, tax: breakdown.sum(&:tax).round(2), breakdown:)
+    end
+
+    private
+
+    def parse(value)
+      income = BigDecimal(value.to_s.strip)
+      raise ArgumentError unless income.finite? && !income.negative?
+
+      income
+    rescue ArgumentError
+      raise ArgumentError, "income must be a non-negative number"
     end
   end
 end

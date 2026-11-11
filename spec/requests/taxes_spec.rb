@@ -16,7 +16,7 @@ RSpec.describe "Taxes", type: :request do
   it "rejects invalid income" do
     post tax_path, params: { country: "NZ", income: "-5" }
     expect(response).to have_http_status(:unprocessable_content)
-    expect(response.body).to include "income must be"
+    expect(response.body).to include "income must be a non-negative number"
   end
 
   it "rejects unknown country" do

@@ -1,5 +1,6 @@
 name: New Zealand
 currency: NZD
+# Each band covers income above the previous `up_to`, up to and including its own. Last band has no `up_to`.
 bands:
   - { up_to: 15600, rate: "0.105" }
   - { up_to: 53500, rate: "0.175" }

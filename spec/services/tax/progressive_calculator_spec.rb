@@ -26,7 +26,17 @@ RSpec.describe Tax::ProgressiveCalculator do
     expect(nz.calculate("1.005").tax).to eq BigDecimal("0.11")
   end
 
-  it "rejects negative income" do
-    expect { nz.calculate(-1) }.to raise_error(ArgumentError)
+  it "taxes fractional income across a band boundary" do
+    expect(nz.calculate("15600.50").tax).to eq BigDecimal("1638.09")
+  end
+
+  it "ignores surrounding whitespace" do
+    expect(nz.calculate(" 10000 ").tax).to eq BigDecimal("1050")
+  end
+
+  [ -1, "abc", "", nil, "NaN", "Infinity", "1,000" ].each do |bad|
+    it "rejects #{bad.inspect}" do
+      expect { nz.calculate(bad) }.to raise_error(ArgumentError, "income must be a non-negative number")
+    end
   end
 end
