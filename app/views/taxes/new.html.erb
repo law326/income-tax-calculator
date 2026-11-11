@@ -1,0 +1,38 @@
+<h1>Income tax calculator</h1>
+
+<%= form_with url: tax_path, method: :post do |f| %>
+  <p>
+    <%= f.label :country, "Country" %>
+    <%= f.select :country, @rules.map { [_1.name, _1.code] }, selected: params[:country] %>
+  </p>
+  <p>
+    <%= f.label :income, "Annual income" %>
+    <%= f.number_field :income, value: params[:income], min: 0, step: "0.01", required: true %>
+  </p>
+  <%= f.submit "Calculate" %>
+<% end %>
+
+<% if @error %>
+  <p class="error"><%= @error %></p>
+<% end %>
+
+<% if @result %>
+  <% cur = @rule.currency %>
+  <h2>Result</h2>
+  <dl>
+    <dt>Tax</dt><dd><%= number_to_currency(@result.tax, unit: "#{cur} $") %></dd>
+    <dt>Net income</dt><dd><%= number_to_currency(@result.net, unit: "#{cur} $") %></dd>
+    <dt>Effective rate</dt><dd><%= number_to_percentage(@result.effective_rate * 100, precision: 2) %></dd>
+  </dl>
+  <table>
+    <tr><th>Band</th><th>Rate</th><th>Taxable</th><th>Tax</th></tr>
+    <% @result.breakdown.each do |row| %>
+      <tr>
+        <td><%= number_to_currency(row.band.floor, precision: 0) %> - <%= row.band.ceiling ? number_to_currency(row.band.ceiling, precision: 0) : "and over" %></td>
+        <td><%= number_to_percentage(row.band.rate * 100, precision: 1) %></td>
+        <td><%= number_to_currency(row.taxable) %></td>
+        <td><%= number_to_currency(row.tax) %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>

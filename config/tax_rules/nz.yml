@@ -1,0 +1,8 @@
+name: New Zealand
+currency: NZD
+bands:
+  - { up_to: 15600, rate: "0.105" }
+  - { up_to: 53500, rate: "0.175" }
+  - { up_to: 78100, rate: "0.30" }
+  - { up_to: 180000, rate: "0.33" }
+  - { up_to: ~, rate: "0.39" }

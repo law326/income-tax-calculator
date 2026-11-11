@@ -1,0 +1,5 @@
+name: Testland
+currency: XTS
+bands:
+  - { up_to: 1000, rate: "0" }
+  - { up_to: ~, rate: "0.2" }

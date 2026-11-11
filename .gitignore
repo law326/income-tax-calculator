@@ -1,0 +1,31 @@
+# Logs, temp, uploads
+/log/*
+/tmp/*
+/storage/*
+!/log/.keep
+!/tmp/.keep
+!/storage/.keep
+/tmp/pids/*
+!/tmp/pids/.keep
+
+# Bundler
+/.bundle
+/vendor/bundle
+
+# Env / secrets
+/.env*
+/config/*.key
+/config/master.key
+
+# Test coverage
+/coverage
+
+# Assets
+/public/assets
+/node_modules
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+*.swp
