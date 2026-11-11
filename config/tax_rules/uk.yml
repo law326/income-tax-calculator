@@ -1,0 +1,9 @@
+name: United Kingdom
+currency: GBP
+components:
+  - type: progressive
+    bands:
+      - { up_to: 12570, rate: "0" }
+      - { up_to: 50270, rate: "0.20" }
+      - { up_to: 125140, rate: "0.40" }
+      - { up_to: ~, rate: "0.45" }
