@@ -1,5 +1,5 @@
 module Tax
-  module Components
+  module Levies
     # A single rate on all income.
     class Flat
       def self.build(config)
@@ -11,7 +11,7 @@ module Tax
       end
 
       def call(income)
-        [ Result::Line.new(label: @label, rate: @rate, taxable: income, tax: income * @rate) ]
+        [ Assessment::Charge.new(label: @label, rate: @rate, taxable_amount: income, amount: income * @rate) ]
       end
     end
   end

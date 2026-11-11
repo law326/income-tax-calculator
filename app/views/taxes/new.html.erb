@@ -3,7 +3,7 @@
 <%= form_with url: tax_path, method: :post do |f| %>
   <p>
     <%= f.label :country, "Country" %>
-    <%= f.select :country, @rules.map { [_1.name, _1.code] }, selected: params[:country] %>
+    <%= f.select :country, @regimes.map { [_1.name, _1.code] }, selected: params[:country] %>
   </p>
   <p>
     <%= f.label :income, "Annual income" %>
@@ -16,22 +16,22 @@
   <p class="error"><%= @error %></p>
 <% end %>
 
-<% if @result %>
-  <% cur = @rule.currency %>
+<% if @assessment %>
+  <% cur = @regime.currency %>
   <h2>Result</h2>
   <dl>
-    <dt>Tax</dt><dd><%= number_to_currency(@result.tax, unit: "#{cur} $") %></dd>
-    <dt>Net income</dt><dd><%= number_to_currency(@result.net, unit: "#{cur} $") %></dd>
-    <dt>Effective rate</dt><dd><%= number_to_percentage(@result.effective_rate * 100, precision: 2) %></dd>
+    <dt>Tax</dt><dd><%= number_to_currency(@assessment.tax_payable, unit: "#{cur} $") %></dd>
+    <dt>Net income</dt><dd><%= number_to_currency(@assessment.net_income, unit: "#{cur} $") %></dd>
+    <dt>Effective rate</dt><dd><%= number_to_percentage(@assessment.effective_rate * 100, precision: 2) %></dd>
   </dl>
   <table>
-    <tr><th>Component</th><th>Rate</th><th>Taxable</th><th>Tax</th></tr>
-    <% @result.lines.each do |line| %>
+    <tr><th>Levy</th><th>Rate</th><th>Taxable</th><th>Tax</th></tr>
+    <% @assessment.charges.each do |charge| %>
       <tr>
-        <td><%= line.label %></td>
-        <td><%= number_to_percentage(line.rate * 100, precision: 2, strip_insignificant_zeros: true) %></td>
-        <td><%= number_to_currency(line.taxable) %></td>
-        <td><%= number_to_currency(line.tax) %></td>
+        <td><%= charge.label %></td>
+        <td><%= number_to_percentage(charge.rate * 100, precision: 2, strip_insignificant_zeros: true) %></td>
+        <td><%= number_to_currency(charge.taxable_amount) %></td>
+        <td><%= number_to_currency(charge.amount) %></td>
       </tr>
     <% end %>
   </table>

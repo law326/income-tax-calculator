@@ -1,7 +1,7 @@
 module Tax
-  module Components
+  module Levies
     # Marginal bands: each rate applies only to the income within its band.
-    class Progressive
+    class Graduated
       class InvalidBands < StandardError; end
 
       def self.build(config)
@@ -21,8 +21,8 @@ module Tax
 
       def call(income)
         @bands.map do |band|
-          taxable = band.taxable(income)
-          Result::Line.new(label: label(band), rate: band.rate, taxable:, tax: taxable * band.rate)
+          taxable_amount = band.taxable_amount(income)
+          Assessment::Charge.new(label: label(band), rate: band.rate, taxable_amount:, amount: taxable_amount * band.rate)
         end
       end
 

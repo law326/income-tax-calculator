@@ -1,7 +1,7 @@
 name: United Kingdom
 currency: GBP
-components:
-  - type: progressive
+levies:
+  - type: graduated
     bands:
       - { up_to: 12570, rate: "0" }
       - { up_to: 50270, rate: "0.20" }

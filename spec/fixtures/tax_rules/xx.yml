@@ -1,7 +1,7 @@
 name: Testland
 currency: XTS
-components:
-  - type: progressive
+levies:
+  - type: graduated
     bands:
       - { up_to: 1000, rate: "0" }
       - { up_to: ~, rate: "0.2" }
