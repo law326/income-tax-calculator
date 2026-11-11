@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Tax::ProgressiveCalculator do
+RSpec.describe Tax::Rule do
   let(:nz) { Tax::Registry.default.find("NZ") }
 
   {
@@ -37,6 +37,21 @@ RSpec.describe Tax::ProgressiveCalculator do
   [ -1, "abc", "", nil, "NaN", "Infinity", "1,000" ].each do |bad|
     it "rejects #{bad.inspect}" do
       expect { nz.calculate(bad) }.to raise_error(ArgumentError, "income must be a non-negative number")
+    end
+  end
+
+  describe "composition" do
+    let(:rule) do
+      described_class.new(code: "XX", name: "X", currency: "XTS", components: [
+        Tax::Components::Flat.new(rate: BigDecimal("0.1"), label: "A"),
+        Tax::Components::Flat.new(rate: BigDecimal("0.05"), label: "B")
+      ])
+    end
+
+    it "sums component taxes and keeps one line each" do
+      result = rule.calculate(1000)
+      expect(result.tax).to eq BigDecimal("150")
+      expect(result.lines.map(&:label)).to eq %w[A B]
     end
   end
 end

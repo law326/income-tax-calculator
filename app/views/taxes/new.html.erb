@@ -25,13 +25,13 @@
     <dt>Effective rate</dt><dd><%= number_to_percentage(@result.effective_rate * 100, precision: 2) %></dd>
   </dl>
   <table>
-    <tr><th>Band</th><th>Rate</th><th>Taxable</th><th>Tax</th></tr>
-    <% @result.breakdown.each do |row| %>
+    <tr><th>Component</th><th>Rate</th><th>Taxable</th><th>Tax</th></tr>
+    <% @result.lines.each do |line| %>
       <tr>
-        <td><%= number_to_currency(row.band.floor, precision: 0) %> - <%= row.band.ceiling ? number_to_currency(row.band.ceiling, precision: 0) : "and over" %></td>
-        <td><%= number_to_percentage(row.band.rate * 100, precision: 1) %></td>
-        <td><%= number_to_currency(row.taxable) %></td>
-        <td><%= number_to_currency(row.tax) %></td>
+        <td><%= line.label %></td>
+        <td><%= number_to_percentage(line.rate * 100, precision: 2, strip_insignificant_zeros: true) %></td>
+        <td><%= number_to_currency(line.taxable) %></td>
+        <td><%= number_to_currency(line.tax) %></td>
       </tr>
     <% end %>
   </table>
