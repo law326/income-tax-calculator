@@ -5,10 +5,10 @@ class TaxesController < ApplicationController
 
   def create
     @regimes = registry.all
-    @regime = registry.find(params[:country])
+    @regime = registry.find(params[:country], on: income_date)
     @assessment = @regime.assess(params[:income])
     render :new
-  rescue ArgumentError, Tax::Registry::UnknownCountry => e
+  rescue ArgumentError, Tax::Registry::UnknownCountry, Tax::Registry::NoRegimeInForce => e
     @error = e.message
     render :new, status: :unprocessable_content
   end
@@ -16,4 +16,6 @@ class TaxesController < ApplicationController
   private
 
   def registry = Tax::Registry.default
+
+  def income_date = params[:date].presence ? Date.iso8601(params[:date]) : Date.current
 end

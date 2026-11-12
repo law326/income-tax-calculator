@@ -9,6 +9,10 @@
     <%= f.label :income, "Annual income" %>
     <%= f.number_field :income, value: params[:income], min: 0, step: "0.01", required: true %>
   </p>
+  <p>
+    <%= f.label :date, "Income date" %>
+    <%= f.date_field :date, value: params[:date].presence || Date.current %>
+  </p>
   <%= f.submit "Calculate" %>
 <% end %>
 
@@ -19,6 +23,7 @@
 <% if @assessment %>
   <% cur = @regime.currency %>
   <h2>Result</h2>
+  <p>Rates in force from <%= l(@regime.effective_from, format: :long) %></p>
   <dl>
     <dt>Tax</dt><dd><%= number_to_currency(@assessment.tax_payable, unit: "#{cur} $") %></dd>
     <dt>Net income</dt><dd><%= number_to_currency(@assessment.net_income, unit: "#{cur} $") %></dd>

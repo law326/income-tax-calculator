@@ -1,9 +1,11 @@
 name: United Kingdom
 currency: GBP
-levies:
-  - type: graduated
-    bands:
-      - { up_to: 12570, rate: "0" }
-      - { up_to: 50270, rate: "0.20" }
-      - { up_to: 125140, rate: "0.40" }
-      - { up_to: ~, rate: "0.45" }
+versions:
+  - effective_from: 2026-04-06
+    levies:
+      - type: graduated
+        bands:
+          - { up_to: 12570, rate: "0" }
+          - { up_to: 50270, rate: "0.20" }
+          - { up_to: 125140, rate: "0.40" }
+          - { up_to: ~, rate: "0.45" }

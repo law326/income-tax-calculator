@@ -1,10 +1,16 @@
 name: Testland
 currency: XTS
-levies:
-  - type: graduated
-    bands:
-      - { up_to: 1000, rate: "0" }
-      - { up_to: ~, rate: "0.2" }
-  - type: flat
-    label: Levy
-    rate: "0.01"
+versions:
+  - effective_from: 2020-01-01
+    levies:
+      - type: graduated
+        bands:
+          - { up_to: 1000, rate: "0" }
+          - { up_to: ~, rate: "0.2" }
+      - type: flat
+        label: Levy
+        rate: "0.01"
+  - effective_from: 2010-01-01
+    levies:
+      - type: flat
+        rate: "0.5"

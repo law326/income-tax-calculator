@@ -1,10 +1,10 @@
 module Tax
-  # A country's income tax regime: the sum of its levies (graduated bands, flat charges, ...).
+  # A country's income tax regime from `effective_from`: the sum of its levies (graduated bands, flat charges, ...).
   class Regime
-    attr_reader :code, :name, :currency
+    attr_reader :code, :name, :currency, :effective_from
 
-    def initialize(code:, name:, currency:, levies:)
-      @code, @name, @currency, @levies = code, name, currency, levies
+    def initialize(code:, name:, currency:, effective_from:, levies:)
+      @code, @name, @currency, @effective_from, @levies = code, name, currency, effective_from, levies
     end
 
     def assess(income)

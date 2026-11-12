@@ -1,11 +1,26 @@
 name: New Zealand
 currency: NZD
-levies:
-  - type: graduated
-    # Each band covers income above the previous `up_to`, up to and including its own. Last band has no `up_to`.
-    bands:
-      - { up_to: 15600, rate: "0.105" }
-      - { up_to: 53500, rate: "0.175" }
-      - { up_to: 78100, rate: "0.30" }
-      - { up_to: 180000, rate: "0.33" }
-      - { up_to: ~, rate: "0.39" }
+# Newest first. A version applies from `effective_from` until the next one starts.
+versions:
+  - effective_from: 2025-04-01
+    levies:
+      - type: graduated
+        # Each band covers income above the previous `up_to`, up to and including its own. Last band has no `up_to`.
+        bands:
+          - { up_to: 15600, rate: "0.105" }
+          - { up_to: 53500, rate: "0.175" }
+          - { up_to: 78100, rate: "0.30" }
+          - { up_to: 180000, rate: "0.33" }
+          - { up_to: ~, rate: "0.39" }
+  - effective_from: 2024-04-01
+    levies:
+      - type: graduated
+        bands:
+          - { up_to: 14000, rate: "0.105" }
+          - { up_to: 15600, rate: "0.1282" }
+          - { up_to: 48000, rate: "0.175" }
+          - { up_to: 53500, rate: "0.2164" }
+          - { up_to: 70000, rate: "0.30" }
+          - { up_to: 78100, rate: "0.3099" }
+          - { up_to: 180000, rate: "0.33" }
+          - { up_to: ~, rate: "0.39" }
