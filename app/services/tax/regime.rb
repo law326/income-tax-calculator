@@ -16,12 +16,10 @@ module Tax
     private
 
     def parse(value)
-      income = BigDecimal(value.to_s.strip)
-      raise ArgumentError unless income.finite? && !income.negative?
+      income = BigDecimal(value.to_s.strip, exception: false)
+      raise InvalidIncome, "income must be a non-negative number" unless income&.finite? && !income.negative?
 
       income.round(2)
-    rescue ArgumentError
-      raise ArgumentError, "income must be a non-negative number"
     end
   end
 end

@@ -1,8 +1,6 @@
 module Tax
   # Reads one YAML file per country (file name = country code) into regimes, one per dated version.
   class RegimeLoader
-    class DuplicateVersion < StandardError; end
-
     LEVY_TYPES = { "graduated" => Levies::Graduated, "flat" => Levies::Flat }.freeze
 
     def initialize(dir: Rails.root.join("config/tax_rules"), levy_types: LEVY_TYPES)
@@ -31,7 +29,7 @@ module Tax
 
     def ensure_unique_dates!(code, versions)
       dates = versions.map { _1.fetch("effective_from") }
-      raise DuplicateVersion, "#{code} has duplicate effective_from dates" if dates.uniq.size != dates.size
+      raise InvalidRules, "#{code} has duplicate effective_from dates" if dates.uniq.size != dates.size
     end
 
     def build_levy(config) = @levy_types.fetch(config.fetch("type")).build(config)

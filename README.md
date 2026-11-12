@@ -71,7 +71,7 @@ A new tax structure is a new class under `app/services/tax/levies/` with `self.b
 - **Rules are data.** Rate changes are YAML edits and old versions stay in place, so past calculations stay reproducible.
 - **Composition over inheritance.** A regime is a list of levies. A country mixes structures (for example bands plus a flat levy) without subclassing, and each levy is small and tested alone.
 - **Versions by date.** The income date selects the rates in force. NZ's tax year (1 April to 31 March) falls out of the `effective_from` dates.
-- **Band boundaries.** A band covers income above the previous `up_to`, up to and including its own. A boundary amount is taxed once, in the lower band. `up_to` values must ascend and only the last band may be unbounded. Bad files fail at boot.
+- **Band boundaries.** A band covers income above the previous `up_to`, up to and including its own. A boundary amount is taxed once, in the lower band. `up_to` values must ascend and only the last band may be unbounded. Bad files raise `Tax::InvalidRules` when first loaded.
 - **Exact arithmetic.** `BigDecimal` throughout. Rates are quoted strings in YAML.
 - **Rounding.** Gross income is rounded to cents on input. Each charge is rounded to cents, half up, and the total is the sum of the rounded charges. Displayed lines always add up to the total.
 - **Input.** Annual income, non-negative and finite. Anything else gives a form error.
@@ -82,7 +82,7 @@ A new tax structure is a new class under `app/services/tax/levies/` with `self.b
 - **Simple model over completeness.** Only income tax bands and flat levies exist. Anything else needs a new levy class.
 - **Per-charge rounding** keeps the display consistent, but could differ by a cent from rounding the grand total, if a jurisdiction requires that.
 - **Date field instead of a tax-year picker.** A tax-year dropdown depends on the chosen country and needs JavaScript. A date is simpler and works for any country.
-- **Rules load at boot.** YAML edits need a restart, in exchange for fast lookups and early validation.
+- **Rules load once, on first use.** YAML edits need a restart, in exchange for fast lookups and validation up front.
 - **No database.** Nothing is stored. Rules live in the repo.
 - **Plain ERB and minimal CSS.** No JavaScript, so no build step and easy to read.
 

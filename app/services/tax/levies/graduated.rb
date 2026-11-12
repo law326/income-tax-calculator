@@ -15,7 +15,7 @@ module Tax
 
       def initialize(bands)
         contiguous = bands.each_cons(2).all? { |lower, upper| lower.ceiling == upper.floor }
-        raise Band::InvalidBands, "each band must start where the previous one ends" unless contiguous
+        raise InvalidRules, "each band must start where the previous one ends" unless contiguous
 
         @bands = bands
       end

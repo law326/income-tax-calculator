@@ -8,7 +8,7 @@ class TaxesController < ApplicationController
     @regime = registry.find(params[:country], on: income_date)
     @assessment = @regime.assess(params[:income])
     render :new
-  rescue ArgumentError, Tax::Registry::UnknownCountry, Tax::Registry::NoRegimeInForce => e
+  rescue Tax::Error, Date::Error => e
     @error = e.message
     render :new, status: :unprocessable_content
   end

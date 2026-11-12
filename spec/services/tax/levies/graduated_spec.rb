@@ -21,16 +21,16 @@ RSpec.describe Tax::Levies::Graduated do
 
   describe "validation" do
     it("accepts ascending bands") { expect { build(10, 20, nil) }.not_to raise_error }
-    it("rejects equal up_to values") { expect { build(10, 10, nil) }.to raise_error(Tax::Levies::Band::InvalidBands) }
-    it("rejects descending up_to values") { expect { build(10, 5, nil) }.to raise_error(Tax::Levies::Band::InvalidBands) }
-    it("rejects a band after an unbounded one") { expect { build(nil, 10) }.to raise_error(Tax::Levies::Band::InvalidBands) }
+    it("rejects equal up_to values") { expect { build(10, 10, nil) }.to raise_error(Tax::InvalidRules) }
+    it("rejects descending up_to values") { expect { build(10, 5, nil) }.to raise_error(Tax::InvalidRules) }
+    it("rejects a band after an unbounded one") { expect { build(nil, 10) }.to raise_error(Tax::InvalidRules) }
 
     it "rejects a gap between hand-built bands" do
-      expect { described_class.new([ band(0, 10), band(11, nil) ]) }.to raise_error(Tax::Levies::Band::InvalidBands, /start where/)
+      expect { described_class.new([ band(0, 10), band(11, nil) ]) }.to raise_error(Tax::InvalidRules, /start where/)
     end
 
     it "rejects an overlap between hand-built bands" do
-      expect { described_class.new([ band(0, 10), band(5, nil) ]) }.to raise_error(Tax::Levies::Band::InvalidBands)
+      expect { described_class.new([ band(0, 10), band(5, nil) ]) }.to raise_error(Tax::InvalidRules)
     end
   end
 end

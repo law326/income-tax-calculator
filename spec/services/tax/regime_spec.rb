@@ -42,7 +42,7 @@ RSpec.describe Tax::Regime do
 
   [ -1, "abc", "", nil, "NaN", "Infinity", "1,000" ].each do |bad|
     it "rejects #{bad.inspect}" do
-      expect { nz.assess(bad) }.to raise_error(ArgumentError, "income must be a non-negative number")
+      expect { nz.assess(bad) }.to raise_error(Tax::InvalidIncome, "income must be a non-negative number")
     end
   end
 

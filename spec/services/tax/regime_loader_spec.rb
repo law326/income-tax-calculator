@@ -22,7 +22,7 @@ RSpec.describe Tax::RegimeLoader do
   it "rejects duplicate effective dates" do
     Dir.mktmpdir do |dir|
       write_country(dir, [ { "effective_from" => Date.new(2020, 1, 1), "levies" => [] }, { "effective_from" => Date.new(2020, 1, 1), "levies" => [] } ])
-      expect { described_class.new(dir:).call }.to raise_error(described_class::DuplicateVersion)
+      expect { described_class.new(dir:).call }.to raise_error(Tax::InvalidRules)
     end
   end
 

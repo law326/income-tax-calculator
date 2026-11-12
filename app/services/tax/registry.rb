@@ -2,9 +2,6 @@ module Tax
   # Looks up regimes by country and date. A country has one regime per dated version,
   # e.g. NZ has one from 2024-04-01 and another from 2025-04-01.
   class Registry
-    class UnknownCountry < StandardError; end
-    class NoRegimeInForce < StandardError; end
-
     def self.default = @default ||= new(RegimeLoader.new.call)
 
     def initialize(regimes)

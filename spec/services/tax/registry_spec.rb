@@ -23,11 +23,11 @@ RSpec.describe Tax::Registry do
     end
 
     it "raises before the first version" do
-      expect { registry.find("XX", on: Date.new(2009, 12, 31)) }.to raise_error(described_class::NoRegimeInForce)
+      expect { registry.find("XX", on: Date.new(2009, 12, 31)) }.to raise_error(Tax::NoRegimeInForce)
     end
 
     it "raises for unknown country" do
-      expect { registry.find("ZZ") }.to raise_error(described_class::UnknownCountry)
+      expect { registry.find("ZZ") }.to raise_error(Tax::UnknownCountry)
     end
   end
 
@@ -57,7 +57,7 @@ RSpec.describe Tax::Registry do
     end
 
     it "has no UK rates before 2026-04-06" do
-      expect { default.find("UK", on: Date.new(2026, 4, 5)) }.to raise_error(described_class::NoRegimeInForce)
+      expect { default.find("UK", on: Date.new(2026, 4, 5)) }.to raise_error(Tax::NoRegimeInForce)
     end
   end
 end

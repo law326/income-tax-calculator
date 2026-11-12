@@ -31,8 +31,8 @@ RSpec.describe Tax::Levies::Band do
   end
 
   describe "validation" do
-    it("rejects a ceiling equal to the floor") { expect { make_band(10, 10) }.to raise_error(Tax::Levies::Band::InvalidBands) }
-    it("rejects a ceiling below the floor") { expect { make_band(10, 5) }.to raise_error(Tax::Levies::Band::InvalidBands) }
-    it("rejects a missing floor") { expect { described_class.new(floor: nil, ceiling: BigDecimal(5), rate: 0) }.to raise_error(Tax::Levies::Band::InvalidBands) }
+    it("rejects a ceiling equal to the floor") { expect { make_band(10, 10) }.to raise_error(Tax::InvalidRules) }
+    it("rejects a ceiling below the floor") { expect { make_band(10, 5) }.to raise_error(Tax::InvalidRules) }
+    it("rejects a missing floor") { expect { described_class.new(floor: nil, ceiling: BigDecimal(5), rate: 0) }.to raise_error(Tax::InvalidRules) }
   end
 end
