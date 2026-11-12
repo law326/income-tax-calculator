@@ -72,6 +72,21 @@ RSpec.describe Tax::Regime do
       expect(assessment.tax_payable).to eq assessment.charges.sum(&:amount)
       expect(assessment.tax_payable).to eq BigDecimal("73308.07")
     end
+
+    it "keeps lines and total consistent across many incomes" do
+      random = Random.new(1)
+      200.times do
+        assessment = regime.assess(BigDecimal(random.rand(0..25_000_000)) / 100)
+        expect(assessment.charges.map(&:amount)).to all(satisfy { _1 == _1.round(2) })
+        expect(assessment.tax_payable).to eq assessment.charges.sum(&:amount)
+      end
+    end
+
+    it "rounds a half-cent charge up" do
+      half = described_class.new(code: "XX", name: "X", currency: "XTS", symbol: "X$", effective_from: Date.new(2025, 4, 1),
+                                 levies: [ Tax::Levies::Flat.new(rate: BigDecimal("0.5"), label: "Half") ])
+      expect(half.assess("0.05").tax_payable).to eq BigDecimal("0.03")
+    end
   end
 
   describe "levies" do
