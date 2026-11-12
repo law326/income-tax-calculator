@@ -1,40 +1,56 @@
 module Tax
-  # Regimes loaded from one YAML file per country (file name = country code), each with dated versions.
+  # All regimes, loaded from one YAML file per country (file name = country code).
+  # A country has one regime per dated version, e.g. NZ has one from 2024-04-01 and another from 2025-04-01.
   class Registry
     class UnknownCountry < StandardError; end
     class NoRegimeInForce < StandardError; end
     class DuplicateVersion < StandardError; end
 
-    LEVIES = { "graduated" => Levies::Graduated, "flat" => Levies::Flat }.freeze
+    LEVY_TYPES = { "graduated" => Levies::Graduated, "flat" => Levies::Flat }.freeze
 
     def self.default = @default ||= new
 
     def initialize(dir: Rails.root.join("config/tax_rules"))
-      @regimes = Dir[File.join(dir, "*.yml")].sort.flat_map { load_regimes(_1) }
-                                             .group_by(&:code).transform_values { |v| v.sort_by(&:effective_from).reverse }
+      @regimes = Dir[File.join(dir, "*.yml")].sort.flat_map { load_file(_1) }
     end
 
-    # Latest regime per country.
-    def all = @regimes.values.map(&:first)
+    # The newest regime of each country.
+    def all
+      @regimes.group_by(&:code).values.map { |versions| versions.max_by(&:effective_from) }
+    end
 
+    # The regime of a country that was in force on a date.
     def find(code, on: Date.current)
-      versions = @regimes.fetch(code.to_s.upcase) { raise UnknownCountry, "unknown country: #{code}" }
-      versions.find { _1.effective_from <= on } || raise(NoRegimeInForce, "no #{code.to_s.upcase} tax rates in force on #{on}")
+      code = code.to_s.upcase
+      versions = @regimes.select { _1.code == code }
+      raise UnknownCountry, "unknown country: #{code}" if versions.empty?
+
+      in_force_regime = versions.select { _1.effective_from <= on }
+      raise NoRegimeInForce, "no #{code} tax rates in force on #{on}" if in_force_regime.empty?
+
+      in_force_regime.max_by(&:effective_from)
     end
 
     private
 
-    def load_regimes(path)
-      data = YAML.safe_load_file(path, permitted_classes: [ Date ])
+    def load_file(path)
+      country = YAML.safe_load_file(path, permitted_classes: [ Date ])
       code = File.basename(path, ".yml").upcase
-      dates = data.fetch("versions").map { _1.fetch("effective_from") }
-      raise DuplicateVersion, "#{code} has duplicate effective_from dates" unless dates.uniq.size == dates.size
+      versions = country.fetch("versions")
+      ensure_unique_dates!(code, versions)
 
-      data.fetch("versions").map do |version|
-        levies = version.fetch("levies").map { LEVIES.fetch(_1.fetch("type")).build(_1) }
-        Regime.new(code:, name: data.fetch("name"), currency: data.fetch("currency"), symbol: data.fetch("symbol"),
-                   effective_from: version.fetch("effective_from"), levies:)
+      versions.map do |version|
+        Regime.new(code:, name: country.fetch("name"), currency: country.fetch("currency"), symbol: country.fetch("symbol"),
+                   effective_from: version.fetch("effective_from"),
+                   levies: version.fetch("levies").map { build_levy(_1) })
       end
     end
+
+    def ensure_unique_dates!(code, versions)
+      dates = versions.map { _1.fetch("effective_from") }
+      raise DuplicateVersion, "#{code} has duplicate effective_from dates" if dates.uniq.size != dates.size
+    end
+
+    def build_levy(config) = LEVY_TYPES.fetch(config.fetch("type")).build(config)
   end
 end

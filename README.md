@@ -63,7 +63,7 @@ versions:                       # one entry per rate change; dates must be uniqu
         rate: "0.0167"
 ```
 
-A new tax structure is a new class under `app/services/tax/levies/` with `self.build(config)` and `call(income)`, plus an entry in `Registry::LEVIES`.
+A new tax structure is a new class under `app/services/tax/levies/` with `self.build(config)` and `call(income)`, plus an entry in `Registry::LEVY_TYPES`.
 
 ### Key decisions and assumptions
 
