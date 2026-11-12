@@ -84,6 +84,7 @@ A new tax structure is a new class under `app/services/tax/levies/` with `self.b
 ### Key decisions and assumptions
 
 - **Rules are data.** Rate changes are YAML edits and old versions stay in place, so past calculations stay reproducible.
+- **Added flat levies and UK rules.** Although the requirement only asked for NZ rule, but I added the flat levy and UK rule config to demostrate the extensibility the choosen architecture can do.
 - **Composition over inheritance.** A regime is a list of levies. A country mixes structures (for example bands plus a flat levy) without subclassing, and each levy is small and tested alone.
 - **Versions by date.** The income date selects the rates in force. NZ's tax year (1 April to 31 March) falls out of the `effective_from` dates.
 - **Band boundaries.** A band covers income above the previous `up_to`, up to and including its own. A boundary amount is taxed once, in the lower band. `up_to` values must ascend and only the last band may be unbounded. Bad files raise `Tax::InvalidRules` when first loaded.
