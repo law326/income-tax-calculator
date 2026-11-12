@@ -22,6 +22,12 @@ RSpec.describe Tax::Regime do
     expect(nz.assess(0).effective_rate).to eq 0
   end
 
+  it "rounds gross income to cents" do
+    assessment = nz.assess("1000.005")
+    expect(assessment.gross_income).to eq BigDecimal("1000.01")
+    expect(assessment.net_income).to eq BigDecimal("895.01")
+  end
+
   it "rounds to cents" do
     expect(nz.assess("1.005").tax_payable).to eq BigDecimal("0.11")
   end
@@ -50,9 +56,27 @@ RSpec.describe Tax::Regime do
     end
   end
 
+  describe "rounding across levies" do
+    let(:regime) do
+      graduated = Tax::Levies::Graduated.build("bands" => [
+        { "up_to" => 15_600, "rate" => "0.105" }, { "up_to" => 53_500, "rate" => "0.175" },
+        { "up_to" => 78_100, "rate" => "0.30" }, { "up_to" => 180_000, "rate" => "0.33" }, { "up_to" => nil, "rate" => "0.39" }
+      ])
+      described_class.new(code: "XX", name: "X", currency: "XTS", symbol: "X$", effective_from: Date.new(2025, 4, 1),
+                          levies: [ graduated, Tax::Levies::Flat.new(rate: BigDecimal("0.0167"), label: "ACC") ])
+    end
+
+    it "rounds each charge so the lines add up to the total" do
+      assessment = regime.assess("231695.51")
+      expect(assessment.charges.map(&:amount)).to all(satisfy { _1 == _1.round(2) })
+      expect(assessment.tax_payable).to eq assessment.charges.sum(&:amount)
+      expect(assessment.tax_payable).to eq BigDecimal("73308.07")
+    end
+  end
+
   describe "levies" do
     let(:regime) do
-      described_class.new(code: "XX", name: "X", currency: "XTS", effective_from: Date.new(2020, 1, 1), levies: [
+      described_class.new(code: "XX", name: "X", currency: "XTS", symbol: "X$", effective_from: Date.new(2020, 1, 1), levies: [
         Tax::Levies::Flat.new(rate: BigDecimal("0.1"), label: "A"),
         Tax::Levies::Flat.new(rate: BigDecimal("0.05"), label: "B")
       ])

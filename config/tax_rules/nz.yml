@@ -1,5 +1,6 @@
 name: New Zealand
 currency: NZD
+symbol: "$"
 # Newest first. A version applies from `effective_from` until the next one starts.
 versions:
   - effective_from: 2025-04-01

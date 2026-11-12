@@ -21,12 +21,12 @@
 <% end %>
 
 <% if @assessment %>
-  <% cur = @regime.currency %>
+  <% symbol = @regime.symbol %>
   <h2>Result</h2>
   <p>Rates in force from <%= l(@regime.effective_from, format: :long) %></p>
   <dl>
-    <dt>Tax</dt><dd><%= number_to_currency(@assessment.tax_payable, unit: "#{cur} $") %></dd>
-    <dt>Net income</dt><dd><%= number_to_currency(@assessment.net_income, unit: "#{cur} $") %></dd>
+    <dt>Tax</dt><dd><%= number_to_currency(@assessment.tax_payable, unit: symbol) %></dd>
+    <dt>Net income</dt><dd><%= number_to_currency(@assessment.net_income, unit: symbol) %></dd>
     <dt>Effective rate</dt><dd><%= number_to_percentage(@assessment.effective_rate * 100, precision: 2) %></dd>
   </dl>
   <table>
@@ -34,9 +34,9 @@
     <% @assessment.charges.each do |charge| %>
       <tr>
         <td><%= charge.label %></td>
-        <td><%= number_to_percentage(charge.rate * 100, precision: 2, strip_insignificant_zeros: true) %></td>
-        <td><%= number_to_currency(charge.taxable_amount) %></td>
-        <td><%= number_to_currency(charge.amount) %></td>
+        <td><%= number_to_percentage(charge.rate * 100, precision: 4, strip_insignificant_zeros: true) %></td>
+        <td><%= number_to_currency(charge.taxable_amount, unit: symbol) %></td>
+        <td><%= number_to_currency(charge.amount, unit: symbol) %></td>
       </tr>
     <% end %>
   </table>

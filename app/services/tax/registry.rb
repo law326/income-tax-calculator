@@ -32,7 +32,7 @@ module Tax
 
       data.fetch("versions").map do |version|
         levies = version.fetch("levies").map { LEVIES.fetch(_1.fetch("type")).build(_1) }
-        Regime.new(code:, name: data.fetch("name"), currency: data.fetch("currency"),
+        Regime.new(code:, name: data.fetch("name"), currency: data.fetch("currency"), symbol: data.fetch("symbol"),
                    effective_from: version.fetch("effective_from"), levies:)
       end
     end

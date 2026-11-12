@@ -29,9 +29,11 @@ module Tax
       private
 
       def label(band)
-        from = ActiveSupport::NumberHelper.number_to_delimited(band.floor.to_i)
-        to = band.ceiling ? ActiveSupport::NumberHelper.number_to_delimited(band.ceiling.to_i) : "and over"
-        "#{from} - #{to}"
+        "#{format(band.floor)} - #{band.ceiling ? format(band.ceiling) : "and over"}"
+      end
+
+      def format(amount)
+        ActiveSupport::NumberHelper.number_to_delimited(amount.to_s("F").delete_suffix(".0"))
       end
     end
   end

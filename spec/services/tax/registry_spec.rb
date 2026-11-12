@@ -4,13 +4,14 @@ RSpec.describe Tax::Registry do
   let(:registry) { described_class.new(dir: Rails.root.join("spec/fixtures/tax_rules")) }
 
   def write_country(dir, versions)
-    File.write("#{dir}/yy.yml", { "name" => "Y", "currency" => "Y", "versions" => versions }.to_yaml)
+    File.write("#{dir}/yy.yml", { "name" => "Y", "currency" => "Y", "symbol" => "Y", "versions" => versions }.to_yaml)
   end
 
   it "loads regimes with mixed levies from a custom directory" do
     regime = registry.find("xx")
     expect(registry.all.map(&:code)).to eq [ "XX" ]
     expect(regime.currency).to eq "XTS"
+    expect(regime.symbol).to eq "X$"
     expect(regime.assess(2000).tax_payable).to eq BigDecimal("220")
   end
 

@@ -1,5 +1,6 @@
 name: Testland
 currency: XTS
+symbol: "X$"
 versions:
   - effective_from: 2020-01-01
     levies:

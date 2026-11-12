@@ -1,16 +1,16 @@
 module Tax
   # A country's income tax regime from `effective_from`: the sum of its levies (graduated bands, flat charges, ...).
   class Regime
-    attr_reader :code, :name, :currency, :effective_from
+    attr_reader :code, :name, :currency, :symbol, :effective_from
 
-    def initialize(code:, name:, currency:, effective_from:, levies:)
-      @code, @name, @currency, @effective_from, @levies = code, name, currency, effective_from, levies
+    def initialize(code:, name:, currency:, symbol:, effective_from:, levies:)
+      @code, @name, @currency, @symbol, @effective_from, @levies = code, name, currency, symbol, effective_from, levies
     end
 
     def assess(income)
       gross_income = parse(income)
-      charges = @levies.flat_map { _1.call(gross_income) }
-      Assessment.new(gross_income:, tax_payable: charges.sum(&:amount).round(2), charges:)
+      charges = @levies.flat_map { _1.call(gross_income) }.map { _1.with(amount: _1.amount.round(2)) }
+      Assessment.new(gross_income:, tax_payable: charges.sum(&:amount), charges:)
     end
 
     private
@@ -19,7 +19,7 @@ module Tax
       income = BigDecimal(value.to_s.strip)
       raise ArgumentError unless income.finite? && !income.negative?
 
-      income
+      income.round(2)
     rescue ArgumentError
       raise ArgumentError, "income must be a non-negative number"
     end

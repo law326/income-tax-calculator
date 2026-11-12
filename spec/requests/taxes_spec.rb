@@ -10,12 +10,17 @@ RSpec.describe "Taxes", type: :request do
   it "calculates tax using today's rates by default" do
     post tax_path, params: { country: "NZ", income: "100000" }
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include "22,877.50"
+    expect(response.body).to include "$22,877.50"
+  end
+
+  it "uses the regime currency symbol" do
+    post tax_path, params: { country: "UK", income: "100000" }
+    expect(response.body).to include "£27,432.00"
   end
 
   it "uses the rates in force on the income date" do
     post tax_path, params: { country: "NZ", income: "15600", date: "2025-03-31" }
-    expect(response.body).to include "1,675.12"
+    expect(response.body).to include "1,675.12", "12.82%"
   end
 
   it "rejects invalid income" do

@@ -11,6 +11,10 @@ RSpec.describe Tax::Levies::Graduated do
     expect(charges.map(&:taxable_amount)).to eq [ BigDecimal(10_000), BigDecimal(2000) ]
   end
 
+  it "labels fractional boundaries without truncating" do
+    expect(build(1000.5, nil).call(BigDecimal(1)).map(&:label)).to eq [ "0 - 1,000.5", "1,000.5 - and over" ]
+  end
+
   it "counts a boundary amount in the lower band only" do
     charges = build(10, nil).call(BigDecimal(10))
     expect(charges.map(&:taxable_amount)).to eq [ BigDecimal(10), 0 ]
