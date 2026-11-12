@@ -5,10 +5,12 @@ module Tax
       class InvalidBands < StandardError; end
 
       def self.build(config)
-        floor = BigDecimal(0)
-        bands = config.fetch("bands").map do |row|
-          ceiling = row["up_to"] && BigDecimal(row["up_to"].to_s)
-          Band.new(floor:, ceiling:, rate: BigDecimal(row.fetch("rate"))).tap { floor = ceiling }
+        rows = config.fetch("bands")
+        ceilings = rows.map { |row| row["up_to"] && BigDecimal(row["up_to"].to_s) }
+        floors = [ BigDecimal(0), *ceilings ] # each band starts where the previous one ends
+
+        bands = rows.zip(floors, ceilings).map do |row, floor, ceiling|
+          Band.new(floor:, ceiling:, rate: BigDecimal(row.fetch("rate")))
         end
         new(bands)
       end
