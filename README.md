@@ -17,6 +17,21 @@ bin/rails server
 
 Open http://localhost:3000.
 
+### Docker (development)
+
+```sh
+docker build -t tax-calculator .
+docker run --rm -p 3000:3000 -v "$PWD":/rails tax-calculator
+```
+
+Open http://localhost:3000. The source is mounted, so code and rule changes reload without rebuilding.
+
+Run the tests in the same image:
+
+```sh
+docker run --rm -v "$PWD":/rails tax-calculator bundle exec rspec
+```
+
 ## Tests and coverage
 
 ```sh

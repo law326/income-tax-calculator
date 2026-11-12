@@ -1,0 +1,9 @@
+.git
+.github
+/.env*
+/log/*
+/tmp/*
+/coverage
+/storage/*
+/node_modules
+.DS_Store
