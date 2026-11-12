@@ -106,6 +106,7 @@ A new tax structure is a new class under `app/services/tax/levies/` with `self.b
 - Tax-year picker, and monthly or fortnightly pay periods.
 - Per-jurisdiction rounding rules (for example whole dollars).
 - Validation of rates (0 to 1) and clearer errors for malformed YAML.
+- Better validation of rule files for no unbounded top band.
 - Currency formatting by locale.
 - JSON API endpoint for other tools.
 - A system test of the form in a real browser.
