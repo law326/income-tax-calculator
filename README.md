@@ -103,11 +103,11 @@ A new tax structure is a new class under `app/services/tax/levies/` with `self.b
 
 ## Future improvements
 
-- UK personal allowance taper above £100,000.
-- Other NZ items: ACC earner levy, tax codes, student loan, KiwiSaver.
 - Tax-year picker, and monthly or fortnightly pay periods.
 - Per-jurisdiction rounding rules (for example whole dollars).
 - Validation of rates (0 to 1) and clearer errors for malformed YAML.
 - Currency formatting by locale.
 - JSON API endpoint for other tools.
 - A system test of the form in a real browser.
+- A regime that combines another regime's levies, for example federal plus state, with codes like US-CA.
+- Move rules to a database so they can be updated without a code deploy.
