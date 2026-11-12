@@ -32,12 +32,13 @@ SimpleCov runs with the suite and fails it below 100% line and branch coverage. 
 A `Regime` is a country's rules from a given date. It is the sum of its `levies`. Each levy turns an income into `Assessment::Charge` lines.
 
 ```
-config/tax_rules/<code>.yml  ->  Registry  ->  Regime(levies) ->  Assessment(charges)
+config/tax_rules/<code>.yml  ->  RegimeLoader  ->  Registry  ->  find(code, on:)  ->  Regime(levies)  ->  Assessment(charges)
 ```
 
 | Class | Role |
 |---|---|
-| `Registry` | Loads one YAML file per country. `find(code, on:)` picks the version in force on a date. |
+| `RegimeLoader` | Reads one YAML file per country into regimes, one per dated version. |
+| `Registry` | Looks regimes up. `find(code, on:)` picks the version in force on a date. |
 | `Regime` | Parses income, runs its levies, returns an `Assessment`. |
 | `Levies::Graduated` | Marginal bands, with `Levies::Band` as one band. |
 | `Levies::Flat` | A single rate on all income. |
@@ -63,7 +64,7 @@ versions:                       # one entry per rate change; dates must be uniqu
         rate: "0.0167"
 ```
 
-A new tax structure is a new class under `app/services/tax/levies/` with `self.build(config)` and `call(income)`, plus an entry in `Registry::LEVY_TYPES`.
+A new tax structure is a new class under `app/services/tax/levies/` with `self.build(config)` and `call(income)`, plus an entry in `RegimeLoader::LEVY_TYPES` (or pass `levy_types:` to `RegimeLoader.new`).
 
 ### Key decisions and assumptions
 
@@ -81,7 +82,7 @@ A new tax structure is a new class under `app/services/tax/levies/` with `self.b
 - **Simple model over completeness.** Only income tax bands and flat levies exist. Anything else needs a new levy class.
 - **Per-charge rounding** keeps the display consistent, but could differ by a cent from rounding the grand total, if a jurisdiction requires that.
 - **Date field instead of a tax-year picker.** A tax-year dropdown depends on the chosen country and needs JavaScript. A date is simpler and works for any country.
-- **Registry loads at boot.** YAML edits need a restart, in exchange for fast lookups and early validation.
+- **Rules load at boot.** YAML edits need a restart, in exchange for fast lookups and early validation.
 - **No database.** Nothing is stored. Rules live in the repo.
 - **Plain ERB and minimal CSS.** No JavaScript, so no build step and easy to read.
 
